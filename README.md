@@ -2,7 +2,7 @@
 
 Type-safe reactive **access control engine** with **React 18 adapter** for managing permissions and role-based access in React projects
 
-✨ ## Features
+## ✨ Features
 
 - 🔒 **Type-safe permissions** full - Typescript interface
 - ⚡️ **Reactive engine** - automatic updates via subscription system
@@ -13,18 +13,15 @@ Type-safe reactive **access control engine** with **React 18 adapter** for manag
 - 🌴 **Tree-shakeable** - optimized for bundlers
 - 🖥️ **SSR compatible** - safe for NExt.js and server rendering
 
----
-
-📦 ## Installation
+##  📦 Installation
 
 ```bash
 npm install react-access-control
 # or
 yarn add react-access-control
 ```
----
 
-🚀 ## Quick Start
+## 🚀 Quick Start
 
 ### 1. Create Access Control
 
@@ -41,14 +38,12 @@ const access = createAccessControl({
 });
 ```
 
----
 ### 2. Check Permissions
 
 ```bash
 access.can("user.create") // true
 access.can("user.delete") // false
 ```
----
 
 ### 3. Update Roles Dynamically
 
@@ -56,9 +51,8 @@ access.can("user.delete") // false
 access.updateRoles(["admin"]);
 access.can("user.delete") // true
 ```
----
 
-⚛️ ## React Usage
+## ⚛️ React Usage
 
 ```bash
 import { useAccess } from "react-access-control/react";
@@ -73,34 +67,26 @@ function MyComponent({ access }: { access: typeof access }) {
     </>)
 }
 ```
----
 
-🧠 ## How It works
+## 🧠 How It works
 
 - The core engine maintains a permission set 
 - Updates trigger a subscription system  
 - React hooks uses `useSyncExternalStorage` for optimal rendering
 - Components re-render only when permissions change
- 
----
 
-🔧 ## API
+## 🔧 API
 createAccessControl(config)
 
 ### Creates a new access control instance.
 
 #### Config
 
-```md
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | roles | RoleConfig | Roles → permissions mapping |
-| :---- | :--- | :---------- |
 | userRoles | (keyof roles)[] | Current user roles | 
-| :---- | :--- | :---------- |
 | userPermissions | string[](optional) | Extra permissions | 
-
----
 
 ### Returned API
 
@@ -134,25 +120,14 @@ access.subscribe(listener)
 
 #### Subscribe to changes(used internally by ***React***)
 
----
-
-🧩 ## Import Structure
+## 🧩 Import Structure
 
 ```bash
 import { createAccessControl } from "react-access-control";
 import { useAccess } from "react-access-control/react";
 ```
----
 
-🧪 ## Example
-
-See full working example
-```bash
-/examples/react-demo
-```
----
-
-📊 ## When to Use
+## 📊 When to Use
 
 - Admin dashboards
 - SaaS role-based systems
@@ -160,17 +135,13 @@ See full working example
 - Multi-tenant applications
 - Complex UI permission logic
 
----
-
-⚠️ ## When NOT to Use
+## ⚠️ When NOT to Use
 
 - Simple boolean flags
 - Static permission systems
 - Small apps without role complexity
 
----
-
-🛠️ ## Development 
+## 🛠️ Development 
 
 ```bash
 npm run dev
@@ -178,9 +149,8 @@ npm run build
 npm test
 npm run typecheck
 ```
----
 
-🤝 ## Contributing
+## 🤝 Contributing
 
 Contributins are welcome.
 
@@ -189,9 +159,7 @@ Contributins are welcome.
 - Avoid unnecessary abstractions
 - Prefer composable APIs
 
----
-
-⭐️ ## Support
+## ⭐️  Support
 
 If you find this useful:
 
