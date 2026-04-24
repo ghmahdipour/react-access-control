@@ -1,0 +1,43 @@
+{
+  "name": "react-access-control",
+  "version": "0.0.1",
+  "description": "Type-safe access control engine with React 18 adapter",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts src/react/useAccess.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts src/react/useAccess.ts --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["react", "access-control", "permissions", "rbac", "typescript"],
+  "author": "",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects" : false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "import": "./dist/react/useAccess.js",
+      "require": "./dist/react/useAccess.cjs"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.0",
+    "@types/react": "^18.3.0",
+    "react": "^18.3.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
