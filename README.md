@@ -76,7 +76,7 @@ const { AccessProvider, useAccess } = createAccessContext<typeof roles>();
 ### Step 3 - Use in Component
 
 ```bash              
-function MyComponent({ access }: { access: typeof access }) {
+function MyComponent() {
     const can = useAccess();
 
     return(<>
