@@ -28,12 +28,14 @@ yarn add react-access-control
 ```bash
 import { createAccessControl } from "react-access-control";
 
-const access = createAccessControl({
-    roles: {
+    const roles: {
         admin: ["user.create", "user.delete", "user.view"],
         editor: ["user.create", "user.view"],
         viewer: ["user.view"]
-    } as const,
+    } as const;
+
+const access = createAccessControl({
+    roles,
     userRoles: ["viewer"]
 });
 ```
@@ -41,8 +43,8 @@ const access = createAccessControl({
 ### 2. Check Permissions
 
 ```bash
-access.can("user.create") // true
-access.can("user.delete") // false
+access.can("user.create") // false
+access.can("user.view") // true
 ```
 
 ### 3. Update Roles Dynamically
@@ -54,11 +56,28 @@ access.can("user.delete") // true
 
 ## ⚛️ React Usage
 
-```bash
-import { useAccess } from "react-access-control/react";
+### Step 1 - Create Typed Context
 
+```bash
+import { createAccessContext } from "react-access-control/react";
+
+const { AccessProvider, useAccess } = createAccessContext<typeof roles>();
+```
+
+### Step 2 - Wrap Your App
+
+```bash
+
+    <AccessProvider access={access}>
+        <App />
+    </AccessProvider>
+```
+
+### Step 3 - Use in Component
+
+```bash              
 function MyComponent({ access }: { access: typeof access }) {
-    const can = useAccess(access);
+    const can = useAccess();
 
     return(<>
         {can("user.view") && <p>Can view users</p>}
@@ -70,10 +89,10 @@ function MyComponent({ access }: { access: typeof access }) {
 
 ## 🧠 How It works
 
-- The core engine maintains a permission set 
+- The core engine maintains a computed permission set based on roles and direct permissons.
 - Updates trigger a subscription system  
 - React hooks uses `useSyncExternalStorage` for optimal rendering
-- Components re-render only when permissions change
+- Components re-render **only when permissions actually change**
 
 ## 🔧 API
 createAccessControl(config)
@@ -124,7 +143,7 @@ access.subscribe(listener)
 
 ```bash
 import { createAccessControl } from "react-access-control";
-import { useAccess } from "react-access-control/react";
+import { createAccessContext } from "react-access-control/react";
 ```
 
 ## 📊 When to Use
@@ -152,7 +171,9 @@ npm run typecheck
 
 ## 🤝 Contributing
 
-Contributins are welcome.
+Contributions are welcome.
+
+Please follow these guidelines:
 
 - Keep Typescript strict
 - Maintain type interface
