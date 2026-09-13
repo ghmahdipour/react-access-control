@@ -4,14 +4,14 @@ Type-safe reactive **access control engine** with **React 18 adapter** for manag
 
 ## ✨ Features
 
-- 🔒 **Type-safe permissions** full - Typescript interface
-- ⚡️ **Reactive engine** - automatic updates via subscription system
-- 🔁 **Dynamic Updates** - change roles & permissions at runtime
-- ⚛️ **React 18 ready** - built with `useSyncExternalStorage`
-- 🧩 **Framework-agnostic core** - works without React
-- 📦 **ESM + CJS support** - modern package output
-- 🌴 **Tree-shakeable** - optimized for bundlers
-- 🖥️ **SSR compatible** - safe for NExt.js and server rendering
+- 🔒 **Type-safe permissions** - Permissions are inferred from your role configuration
+- ⚡️ **Reactive engine** - Automatic updates via a subscription system
+- 🔁 **Dynamic updates** - Change roles and permissions at runtime
+- ⚛️ **React 18 ready** - Built with `useSyncExternalStore`
+- 🧩 **Framework-agnostic core** - Works without React
+- 📦 **ESM + CJS support** - Modern package output
+- 🌴 **Tree-shakeable** - Optimized for modern bundlers
+- 🖥️ **SSR compatible** - Works with Next.js and server-side rendering
 
 ##  📦 Installation
 
@@ -25,10 +25,10 @@ yarn add react-access-control
 
 ### 1. Create Access Control
 
-```bash
+```ts
 import { createAccessControl } from "react-access-control";
 
-    const roles: {
+    const roles = {
         admin: ["user.create", "user.delete", "user.view"],
         editor: ["user.create", "user.view"],
         viewer: ["user.view"]
@@ -42,23 +42,37 @@ const access = createAccessControl({
 
 ### 2. Check Permissions
 
-```bash
-access.can("user.create") // false
-access.can("user.view") // true
+```ts
+access.can("user.create"); // false
+access.can("user.view"); // true
 ```
 
 ### 3. Update Roles Dynamically
 
-```bash
+```ts
 access.updateRoles(["admin"]);
 access.can("user.delete") // true
 ```
 
+### 4. Add Direct Permissions
+
+Users can also have permissions that are not provided by their roles.
+
+```ts
+const access = createAccessControl({
+    roles,
+    userRoles: ["viewer"],
+    userPermissions: ["user.create"],
+});
+
+access.can("user.create"); // true
+```
+
 ## ⚛️ React Usage
 
-### Step 1 - Create Typed Context
+### Step 1 - Create a Typed Context
 
-```bash
+```ts
 import { createAccessContext } from "react-access-control/react";
 
 const { AccessProvider, useAccess } = createAccessContext<typeof roles>();
@@ -66,99 +80,118 @@ const { AccessProvider, useAccess } = createAccessContext<typeof roles>();
 
 ### Step 2 - Wrap Your App
 
-```bash
-
+```tsx
     <AccessProvider access={access}>
         <App />
     </AccessProvider>
 ```
 
-### Step 3 - Use in Component
+### Step 3 - Check Permissions in Components
 
-```bash              
-function MyComponent() {
+```tsx              
+function UserActions() {
     const can = useAccess();
 
-    return(<>
-        {can("user.view") && <p>Can view users</p>}
-        {can("user.create") && <button>Create User</button>}
-        {can("user.delete") && <button>Delete User</button>}
-    </>)
+    return(
+        <>
+            {can("user.view") && <p>Can view users</p>}
+            {can("user.create") && <button>Create User</button>}
+            {can("user.delete") && <button>Delete User</button>}
+        </>)
 }
 ```
 
-## 🧠 How It works
+## 🧠 How It Works
 
-- The core engine maintains a computed permission set based on roles and direct permissons.
-- Updates trigger a subscription system  
-- React hooks uses `useSyncExternalStorage` for optimal rendering
-- Components re-render **only when permissions actually change**
+- The core engine maintains a computed permission set based on roles and direct permissions.
+- Updates trigger the subscription system.
+- React uses `useSyncExternalStore` for reactive updates.
+- Subscribers are notified **only when the resolved permissions actually change**
 
 ## 🔧 API
-createAccessControl(config)
 
-### Creates a new access control instance.
+### `createAccessControl(config)`
+
+Creates a new access control instance.
 
 #### Config
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| roles | RoleConfig | Roles → permissions mapping |
-| userRoles | (keyof roles)[] | Current user roles | 
-| userPermissions | string[](optional) | Extra permissions | 
+| `roles` | `RoleConfig` | Mapping of roles to permissions |
+| `userRoles` | `(keyof roles)[]` | Current user roles | 
+| `userPermissions` | `string[]` (optional) | Additional direct permissions | 
 
-### Returned API
+#### Returned API
 
-```bash
-access.can(permission) 
+#### `access.can(permission)`
+
+Checks whether the user has a permission.
+
+```ts
+access.can("user.create");
 ```
 
-#### Check if permission exists
+#### ‍‍‍‍`access.getPermissions()`
 
-```bash
-access.getPermissions()
+Returns all resolved permissions
+
+```ts
+access.getPermissions();
 ```
 
-#### Get all resolved permissions(readonly)
+#### `access.updateRoles(roles)`
 
-```bash
-access.updateRoles(roles)
+Updates the user's roles dynamically.
+
+```ts
+access.updateRoles(["admin"]);
 ```
 
-#### Update roles dynamically
+#### `access.updatePermissions(permissions)`
 
-```bash
-access.updatePermissions(permissions)
+Updates the user's direct permissions.
+
+```ts
+access.updatePermissions(["user.create"]);
 ```
 
-#### Update direct permissions
+#### `access.subscribe(listener)`
 
-```bash
-access.subscribe(listener)
+Subscribe to access-control changes.
+
+The returned function can be used to unsubscribe the listener.
+
+```ts
+const unsubscribe = access.subscribe(() => {
+    console.log("Permissions changed");
+});
+
+unsubscribe();
 ```
-
-#### Subscribe to changes(used internally by ***React***)
 
 ## 🧩 Import Structure
 
-```bash
+```ts
 import { createAccessControl } from "react-access-control";
 import { createAccessContext } from "react-access-control/react";
 ```
+
+The core package can be used independently of React, while the `/react` entry point provides the React adapter.
 
 ## 📊 When to Use
 
 - Admin dashboards
 - SaaS role-based systems
-- Feature flagging
+- Feature access and gating
 - Multi-tenant applications
 - Complex UI permission logic
 
 ## ⚠️ When NOT to Use
 
 - Simple boolean flags
-- Static permission systems
-- Small apps without role complexity
+- Fully static permission systems
+- Small applications without role or permission complexity
 
 ## 🛠️ Development 
 
@@ -175,15 +208,16 @@ Contributions are welcome.
 
 Please follow these guidelines:
 
-- Keep Typescript strict
-- Maintain type interface
+- Keep TypeScript strict
+- Maintain type safety
 - Avoid unnecessary abstractions
 - Prefer composable APIs
+- Add tests for new behavior
 
-## ⭐️  Support
+## ⭐️ Support
 
 If you find this useful:
 
-- ⭐️ Star the repo
+- ⭐️ Star the repository
 - 🪄 Report issues
 - 💡 Suggest improvements

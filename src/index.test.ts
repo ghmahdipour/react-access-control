@@ -46,5 +46,52 @@ describe("createAccessControl", () => {
         access.subscribe(mock);
         access.updateRoles(["admin"]);
         expect(mock).toHaveBeenCalled();
+    });
+
+    it("sould not notify subscribers when permissions do not change", () => {
+        const access = createAccessControl({
+            roles: {
+                admin: ["user.create"],
+                editor: ["user.create"]
+            } as const,
+            userRoles: ["admin"]
+        });
+
+        const mock = vi.fn();
+
+        access.subscribe(mock);
+        access.updateRoles(["editor"]);
+        expect(mock).not.toHaveBeenCalled();
+    });
+    it("sould not notify subscribers when updated permissions do not change", () => {
+        const access = createAccessControl({
+            roles: {
+                admin: ["user.create"]
+            } as const,
+            userRoles: ["admin"],
+            userPermissions: ["user.create"]
+        });
+
+        const mock = vi.fn();
+
+        access.subscribe(mock);
+        access.updatePermissions(["user.create"]);
+        expect(mock).not.toHaveBeenCalled();
+    });
+    it("sould unsubscribe listeners", () => {
+        const access = createAccessControl({
+            roles: {
+                admin: ["user.create"],
+                editor: []
+            } as const,
+            userRoles: ["editor"]
+        });
+
+        const mock = vi.fn();
+
+        const unsubscribe = access.subscribe(mock);
+        unsubscribe();
+        access.updateRoles(["admin"]);
+        expect(mock).not.toHaveBeenCalled();
     })
 })

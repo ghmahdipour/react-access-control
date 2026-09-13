@@ -1,3 +1,5 @@
+import { permission } from "node:process";
+
 export type RoleConfig = Record<
     string, 
     readonly string[]
@@ -68,11 +70,19 @@ export function createAccessControl<T extends RoleConfig>(config: {
     }
 
     function reCompute() {
-        permissionSet = resolvePermissions(
+        const nextPermissionSet = resolvePermissions(
             config.roles,
             currentRoles,
             currentPermissions
         );
+        const hasChanged = permissionSet.size !== nextPermissionSet.size ||
+        [...permissionSet].some(
+            (permission) => !nextPermissionSet.has(permission)
+        );
+        if(!hasChanged) {
+            return;
+        }
+        permissionSet = nextPermissionSet;
         notify();
     }
 

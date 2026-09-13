@@ -4,8 +4,8 @@
   "description": "Type-safe access control engine with React 18 adapter",
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts src/react/useAccess.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts src/react/useAccess.ts --watch",
+    "build": "tsup src/index.ts src/react/createAccessContext.tsx --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts src/react/createAccessContext.tsx --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
@@ -21,12 +21,14 @@
   "sideEffects" : false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./react": {
-      "import": "./dist/react/useAccess.js",
-      "require": "./dist/react/useAccess.cjs"
+      "types": "./dist/react/createAccessContext.d.ts",
+      "import": "./dist/react/createAccessContext.js",
+      "require": "./dist/react/createAccessContext.cjs"
     }
   },
   "peerDependencies": {
