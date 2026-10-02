@@ -18,14 +18,11 @@ export function createAccessContext<T extends RoleConfig>() {
         );
     }
 
-    function useAccess<T extends RoleConfig>() {
-     
+    function useAccess() {
         const store = useContext(AccessContext);
-    
         if(!store) {
             throw new Error("useAccess must be used within AccessProvider")
         }
-
         const permissions = useSyncExternalStore(
             store.subscribe,
             store.getPermissions,
@@ -40,6 +37,6 @@ export function createAccessContext<T extends RoleConfig>() {
     return {
         AccessProvider,
         useAccess
-    }
+    };
 
 }    

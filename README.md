@@ -1,32 +1,32 @@
 # React Access Control
 
-Type-safe reactive **access control engine** with **React 18 adapter** for managing permissions and role-based access in React projects
+Type-safe reactive **access control engine** with **React 18+ adapter** for managing permissions and role-based access in React applications.
 
 ## ✨ Features
 
 - 🔒 **Type-safe permissions** - Permissions are inferred from your role configuration
-- ⚡️ **Reactive engine** - Automatic updates via a subscription system
-- 🔁 **Dynamic updates** - Change roles and permissions at runtime
-- ⚛️ **React 18 ready** - Built with `useSyncExternalStore`
-- 🧩 **Framework-agnostic core** - Works without React
-- 📦 **ESM + CJS support** - Modern package output
+- ⚡️ **Reactive engine** - Subscribe to permission changes and react to updates automatically
+- 🔁 **Dynamic updates** - Change roles and direct permissions at runtime
+- ⚛️ **React 18+** - Built with `useSyncExternalStore`
+- 🧩 **Framework-agnostic core** - Use the core engine without React
+- 📦 **ESM + CJS support** - Compatible with modern and CommonJS environments
 - 🌴 **Tree-shakeable** - Optimized for modern bundlers
-- 🖥️ **SSR compatible** - Works with Next.js and server-side rendering
+- 🖥️ **SSR compatible** - Uses `useSyncExternalStore` and can be used in SSR applications with appropriate client/server boundaries.
 
 ##  📦 Installation
 
 ```bash
 npm install react-access-control
-# or
-yarn add react-access-control
 ```
 
 ## 🚀 Quick Start
 
 ### 1. Create Access Control
 
+Define your roles and permissions:
+
 ```ts
-import { createAccessControl } from "react-access-control";
+    import { createAccessControl } from "react-access-control";
 
     const roles = {
         admin: ["user.create", "user.delete", "user.view"],
@@ -34,10 +34,10 @@ import { createAccessControl } from "react-access-control";
         viewer: ["user.view"]
     } as const;
 
-const access = createAccessControl({
-    roles,
-    userRoles: ["viewer"]
-});
+    const access = createAccessControl({
+        roles,
+        userRoles: ["viewer"]
+    });
 ```
 
 ### 2. Check Permissions
@@ -49,6 +49,8 @@ access.can("user.view"); // true
 
 ### 3. Update Roles Dynamically
 
+Roles can be changed at runtime:
+
 ```ts
 access.updateRoles(["admin"]);
 access.can("user.delete") // true
@@ -59,13 +61,13 @@ access.can("user.delete") // true
 Users can also have permissions that are not provided by their roles.
 
 ```ts
-const access = createAccessControl({
-    roles,
-    userRoles: ["viewer"],
-    userPermissions: ["user.create"],
-});
+    const access = createAccessControl({
+        roles,
+        userRoles: ["viewer"],
+        userPermissions: ["user.create"],
+    });
 
-access.can("user.create"); // true
+    access.can("user.create"); // true
 ```
 
 ## ⚛️ React Usage
@@ -119,8 +121,8 @@ Creates a new access control instance.
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `roles` | `RoleConfig` | Mapping of roles to permissions |
-| `userRoles` | `(keyof roles)[]` | Current user roles | 
-| `userPermissions` | `string[]` (optional) | Additional direct permissions | 
+| `userRoles` | `(keyof T)[]` | Current user roles | 
+| `userPermissions` | `readonly ExtractPermissions<T>[]` (optional) | Additional direct permissions | 
 
 #### Returned API
 
@@ -134,7 +136,7 @@ access.can("user.create");
 
 #### ‍‍‍‍`access.getPermissions()`
 
-Returns all resolved permissions
+Returns the current resolved permissions.
 
 ```ts
 access.getPermissions();
@@ -148,6 +150,8 @@ Updates the user's roles dynamically.
 access.updateRoles(["admin"]);
 ```
 
+Subscribers are notified only if the resulting permission set changes.
+
 #### `access.updatePermissions(permissions)`
 
 Updates the user's direct permissions.
@@ -156,11 +160,13 @@ Updates the user's direct permissions.
 access.updatePermissions(["user.create"]);
 ```
 
+Subscribers are notified only if the resulting permission set changes.
+
 #### `access.subscribe(listener)`
 
-Subscribe to access-control changes.
+Subscribes to access-control changes.
 
-The returned function can be used to unsubscribe the listener.
+The returned function can be used to unsubscribe the listener:
 
 ```ts
 const unsubscribe = access.subscribe(() => {
@@ -183,13 +189,13 @@ The core package can be used independently of React, while the `/react` entry po
 
 - Admin dashboards
 - SaaS role-based systems
-- Feature access and gating
+- Feature access and UI gating
 - Multi-tenant applications
-- Complex UI permission logic
+- Applications with dynamic permission changes
 
 ## ⚠️ When NOT to Use
 
-- Simple boolean flags
+- Simple boolean feature flags
 - Fully static permission systems
 - Small applications without role or permission complexity
 

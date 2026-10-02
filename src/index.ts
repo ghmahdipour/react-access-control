@@ -1,5 +1,3 @@
-import { permission } from "node:process";
-
 export type RoleConfig = Record<
     string, 
     readonly string[]
@@ -15,7 +13,7 @@ export interface AccessControl<T extends RoleConfig> {
     getPermissions: () => readonly ExtractPermissions<T>[];
     updateRoles: (roles: (keyof T)[]) => void;
     updatePermissions: (
-        Permission: readonly ExtractPermissions<T>[]
+        permissions: readonly ExtractPermissions<T>[]
     ) => void;
     subscribe: (listener: Listener) => () => void;
 }
@@ -61,6 +59,10 @@ export function createAccessControl<T extends RoleConfig>(config: {
         config.userPermissions
     );
 
+    let permissionSnapshot = Object.freeze(
+        Array.from(permissionSet)
+    ) as readonly ExtractPermissions<T>[];
+
     const listeners = new Set<Listener>()
 
     function notify() {
@@ -83,12 +85,15 @@ export function createAccessControl<T extends RoleConfig>(config: {
             return;
         }
         permissionSet = nextPermissionSet;
+        permissionSnapshot = Object.freeze(
+            Array.from(permissionSet)
+        ) as readonly ExtractPermissions<T>[];
         notify();
     }
 
     return {
         can(permission) { return permissionSet.has(permission) },
-        getPermissions() { return Object.freeze(Array.from(permissionSet)) as readonly ExtractPermissions<T>[] },
+        getPermissions() { return permissionSnapshot; },
         updateRoles(roles) {
             currentRoles = [...roles];
             reCompute();

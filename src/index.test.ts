@@ -18,7 +18,7 @@ describe("createAccessControl", () => {
         expect(access.can("user.create")).toBe(true);
     });
 
-    it("sould update roles dynamically", () => {
+    it("should update roles dynamically", () => {
         const access = createAccessControl({
             roles: {
                 admin: ["user.create", "user.delete"],
