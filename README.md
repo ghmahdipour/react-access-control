@@ -16,7 +16,7 @@ Type-safe reactive **access control engine** with **React 18+ adapter** for mana
 ##  📦 Installation
 
 ```bash
-npm install react-access-control
+npm install @ghazaalma/react-access-control
 ```
 
 ## 🚀 Quick Start
@@ -26,7 +26,7 @@ npm install react-access-control
 Define your roles and permissions:
 
 ```ts
-    import { createAccessControl } from "react-access-control";
+    import { createAccessControl } from "@ghazaalma/react-access-control";
 
     const roles = {
         admin: ["user.create", "user.delete", "user.view"],
@@ -70,12 +70,24 @@ Users can also have permissions that are not provided by their roles.
     access.can("user.create"); // true
 ```
 
-## ⚛️ React Usage
+## ⚛️ React Integration
 
 ### Step 1 - Create a Typed Context
 
 ```ts
-import { createAccessContext } from "react-access-control/react";
+import { createAccessControl } from "@ghazaalma/react-access-control";
+import { createAccessContext } from "@ghazaalma/react-access-control/react";
+
+const roles = {
+    admin: ["user.create", "user.delete", "user.view"],
+    editor: ["user.create", "user.view"],
+    viewer: ["user.view"]
+} as const;
+
+const access = createAccessControl({
+    roles,
+    userRoles: ["viewer"]
+});
 
 const { AccessProvider, useAccess } = createAccessContext<typeof roles>();
 ```
@@ -179,8 +191,8 @@ unsubscribe();
 ## 🧩 Import Structure
 
 ```ts
-import { createAccessControl } from "react-access-control";
-import { createAccessContext } from "react-access-control/react";
+import { createAccessControl } from "@ghazaalma/react-access-control";
+import { createAccessContext } from "@ghazaalma/react-access-control/react";
 ```
 
 The core package can be used independently of React, while the `/react` entry point provides the React adapter.
