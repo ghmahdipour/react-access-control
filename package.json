@@ -1,6 +1,6 @@
 {
   "name": "@ghazaalma/react-access-control",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Type-safe reactive access control engine with a React 18+ adapter",
   "files": [
     "dist"
